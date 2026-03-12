@@ -5,20 +5,27 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Annonce;
+use App\Http\Resources\AnnonceResource;
+use App\Http\Requests\StoreAnnonceRequest;
 
 class AnnonceController extends Controller
 {
-
-    public function index()
+    public function index(Request $request)
     {
-        $annonces = Annonce::with(['category','user'])->get();
+        $query = Annonce::with(['category', 'user']);
 
-        return response()->json($annonces);
+        if ($request->has('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        $annonces = $query->paginate(10);
+
+        return AnnonceResource::collection($annonces);
     }
 
     public function show($id)
     {
-        $annonce = Annonce::with(['category','user'])->find($id);
+        $annonce = Annonce::with(['category', 'user'])->find($id);
 
         if (!$annonce) {
             return response()->json([
@@ -26,29 +33,18 @@ class AnnonceController extends Controller
             ], 404);
         }
 
-        return response()->json($annonce);
+        return new AnnonceResource($annonce);
     }
 
-    public function store(Request $request)
+    public function store(StoreAnnonceRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'organisation_name' => 'required|string|max:255',
-            'organisation_address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'contact_email' => 'nullable|email',
-            'contact_phone' => 'nullable|string|max:20',
-            'user_id' => 'required|exists:users,id'
-        ]);
+        $annonce = Annonce::create($request->validated());
 
-        $annonce = Annonce::create($validated);
+   
 
         return response()->json([
             'message' => 'Annonce créée avec succès',
-            'data' => $annonce
+            'data' => new AnnonceResource($annonce->load(['category', 'user']))
         ], 201);
     }
-
 }
