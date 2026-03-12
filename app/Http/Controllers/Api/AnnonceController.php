@@ -40,11 +40,57 @@ class AnnonceController extends Controller
     {
         $annonce = Annonce::create($request->validated());
 
-   
-
         return response()->json([
             'message' => 'Annonce créée avec succès',
             'data' => new AnnonceResource($annonce->load(['category', 'user']))
         ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $annonce = Annonce::find($id);
+
+        if (!$annonce) {
+            return response()->json([
+                'message' => 'Annonce non trouvée'
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'organisation_name' => 'required|string|max:255',
+            'organisation_address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'contact_email' => 'nullable|email',
+            'contact_phone' => 'nullable|string|max:20',
+            'status' => 'required|string|max:50',
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $annonce->update($validated);
+
+        return response()->json([
+            'message' => 'Annonce mise à jour avec succès',
+            'data' => new AnnonceResource($annonce->load(['category', 'user']))
+        ], 200);
+    }
+
+    public function destroy($id)
+    {
+        $annonce = Annonce::find($id);
+
+        if (!$annonce) {
+            return response()->json([
+                'message' => 'Annonce non trouvée'
+            ], 404);
+        }
+
+        $annonce->delete();
+
+        return response()->json([
+            'message' => 'Annonce supprimée avec succès'
+        ], 200);
     }
 }
