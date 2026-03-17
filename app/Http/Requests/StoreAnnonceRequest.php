@@ -1,4 +1,4 @@
-<<?php
+<?php
 
 namespace App\Http\Requests;
 
@@ -21,8 +21,7 @@ class StoreAnnonceRequest extends FormRequest
             'organisation_address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'contact_email' => 'nullable|email',
-            'contact_phone' => 'nullable|string|max:20',
-            'user_id' => 'required|exists:users,id'
+            'contact_phone' => 'nullable|string|max:20'
         ];
     }
 }

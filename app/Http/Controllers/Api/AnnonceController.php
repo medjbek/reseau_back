@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Annonce;
 use App\Http\Resources\AnnonceResource;
 use App\Http\Requests\StoreAnnonceRequest;
+use App\Models\Category;
 
 class AnnonceController extends Controller
 {
@@ -23,6 +24,12 @@ class AnnonceController extends Controller
         return AnnonceResource::collection($annonces);
     }
 
+    
+    public function categories()
+{
+    return response()->json(Category::select('id', 'name')->get(), 200);
+}
+
     public function show($id)
     {
         $annonce = Annonce::with(['category', 'user'])->find($id);
@@ -38,7 +45,10 @@ class AnnonceController extends Controller
 
     public function store(StoreAnnonceRequest $request)
     {
-        $annonce = Annonce::create($request->validated());
+        $annonce = Annonce::create([
+            ...$request->validated(),
+            'user_id' => $request->user()->id
+        ]);
 
         return response()->json([
             'message' => 'Annonce créée avec succès',
