@@ -97,6 +97,12 @@ return [
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
+        'mongodb' => [
+    'driver' => 'mongodb',
+    'host' => env('MONGO_DB_HOST', '127.0.0.1'),
+    'port' => env('MONGO_DB_PORT', 27017),
+    'database' => env('MONGO_DB_DATABASE', 'annonce_net_stats'),
+],
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
