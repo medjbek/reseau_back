@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Annonce;
+use App\Models\AnnonceStat; 
 use App\Http\Resources\AnnonceResource;
 use App\Http\Requests\StoreAnnonceRequest;
 use App\Models\Category;
@@ -24,11 +25,10 @@ class AnnonceController extends Controller
         return AnnonceResource::collection($annonces);
     }
 
-    
     public function categories()
-{
-    return response()->json(Category::select('id', 'name')->get(), 200);
-}
+    {
+        return response()->json(Category::select('id', 'name')->get(), 200);
+    }
 
     public function show($id)
     {
@@ -101,6 +101,45 @@ class AnnonceController extends Controller
 
         return response()->json([
             'message' => 'Annonce supprimée avec succès'
+        ], 200);
+    }
+
+    public function testMongo()
+    {
+        $stat = AnnonceStat::create([
+            'annonce_id' => 9999,
+            'views' => 1,
+        ]);
+
+        return response()->json([
+            'message' => 'Test MongoDB OK',
+            'data' => $stat
+        ], 201);
+    }
+
+    
+    public function incrementViews($id)
+    {
+        $annonce = Annonce::find($id);
+
+        if (!$annonce) {
+            return response()->json([
+                'message' => 'Annonce non trouvée'
+            ], 404);
+        }
+
+        $stat = AnnonceStat::firstOrCreate(
+            ['annonce_id' => (int) $id],
+            ['views' => 0]
+        );
+
+        $stat->increment('views');
+        $stat->refresh();
+
+        return response()->json([
+            'message' => 'Vue incrémentée avec succès',
+            'annonce_id' => (int) $id,
+            'views' => $stat->views
         ], 200);
     }
 }
