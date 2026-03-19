@@ -13,6 +13,9 @@ Route::get('/annonces', [AnnonceController::class, 'index']);
 Route::get('/annonces/{id}', [AnnonceController::class, 'show']);
 Route::get('/categories', [AnnonceController::class, 'categories']);
 
+Route::get('/test-mongo', [AnnonceController::class, 'testMongo']);
+Route::post('/annonces/{id}/view', [AnnonceController::class, 'incrementViews']);
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
