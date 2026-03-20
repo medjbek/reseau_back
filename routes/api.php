@@ -15,6 +15,7 @@ Route::get('/categories', [AnnonceController::class, 'categories']);
 
 Route::get('/test-mongo', [AnnonceController::class, 'testMongo']);
 Route::post('/annonces/{id}/view', [AnnonceController::class, 'incrementViews']);
+Route::get('/annonces/{id}/views', [AnnonceController::class, 'getViews']);
 
 
 

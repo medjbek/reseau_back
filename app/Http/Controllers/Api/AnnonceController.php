@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Annonce;
-use App\Models\AnnonceStat; 
+use App\Models\AnnonceStat;
 use App\Http\Resources\AnnonceResource;
 use App\Http\Requests\StoreAnnonceRequest;
 use App\Models\Category;
@@ -117,7 +117,6 @@ class AnnonceController extends Controller
         ], 201);
     }
 
-    
     public function incrementViews($id)
     {
         $annonce = Annonce::find($id);
@@ -140,6 +139,16 @@ class AnnonceController extends Controller
             'message' => 'Vue incrémentée avec succès',
             'annonce_id' => (int) $id,
             'views' => $stat->views
+        ], 200);
+    }
+
+    public function getViews($id)
+    {
+        $stat = AnnonceStat::where('annonce_id', (int) $id)->first();
+
+        return response()->json([
+            'annonce_id' => (int) $id,
+            'views' => $stat ? $stat->views : 0
         ], 200);
     }
 }
