@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
 Route::get('/annonces', [AnnonceController::class, 'index']);
 Route::get('/annonces/{id}', [AnnonceController::class, 'show']);
